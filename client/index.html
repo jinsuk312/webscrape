@@ -18,7 +18,14 @@
 		<div class="container"></div>
 		<script>
 			function submitChannel() {
-				const channelValue = document.querySelector('.channel-input').value;
+				const channelURL = document.querySelector('.channel-input').value;
+				fetch('http://localhost:3000/creators', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({ channelURL }),
+				});
 			}
 			function newEl(type, attrs = {}) {
 				const el = document.createElement(type);
@@ -30,19 +37,20 @@
 				return el;
 			}
 
-			const creators = [
-				{ name: 'Code Drip', img: 'https://' },
-				{ name: 'Dave Lee', img: 'https://' },
-				{ name: 'MKBHD', img: 'https://' },
-			];
-
-			const ctr = document.querySelector('.container');
-			const title = newEl('h4', { innerText: creator.name });
-			const img = newEl('img', { src: creator.img });
-			const card = newEl('div', { class: 'card' });
-			card.appendChild(title);
-			card.appendChild(img);
-			ctr.appendChild(card);
+			async function loadCreators() {
+				const res = await fetch('http://localhost:3000/creators');
+				const creators = await res.json();
+				const ctr = document.querySelector('.container');
+				creators.forEach((creator) => {
+					const title = newEl('h4', { innerText: creator.name });
+					const img = newEl('img', { src: creator.img });
+					const card = newEl('div', { class: 'card' });
+					card.appendChild(title);
+					card.appendChild(img);
+					ctr.appendChild(card);
+				});
+			}
+			loadCreators();
 		</script>
 		<style>
 			.container {
